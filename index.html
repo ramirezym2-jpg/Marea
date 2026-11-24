@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MAREA — ¿Qué te trae la marea?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-cream: #FAF6F1;
+      --bg-beige: #F2E9DF;
+      --bg-sand: #E9DDD0;
+      --pink-soft: #F3D9DC;
+      --pink-main: #D98C96;
+      --pink-deep: #C2727D;
+      --brown-warm: #5C4033;
+      --brown-light: #7D5E4F;
+      --border-subtle: rgba(92, 64, 51, 0.16);
+      --shadow-soft: 0 14px 35px rgba(92, 64, 51, 0.06);
+      --radius-lg: 22px;
+      --radius-md: 14px;
+      --radius-pill: 999px;
+      --transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-cream);
+      color: var(--brown-warm);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      line-height: 1.65;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, .serif {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      line-height: 1.15;
+      color: var(--brown-warm);
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Subtle wave divider */
+    .wave-divider {
+      width: 100%;
+      overflow: hidden;
+      line-height: 0;
+    }
+    .wave-divider svg {
+      display: block;
+      width: 100%;
+      height: 36px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 26px;
+      border-radius: var(--radius-pill);
+      font-size: 0.92rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: var(--transition);
+    }
+
+    .btn-primary {
+      background-color: var(--brown-warm);
+      color: var(--bg-cream);
+      box-shadow: 0 8px 20px rgba(92, 64, 51, 0.14);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--pink-deep);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background-color: var(--pink-soft);
+      color: var(--brown-warm);
+      border: 1px solid rgba(217, 140, 150, 0.35);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--pink-main);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      border: 1px solid var(--brown-warm);
+      color: var(--brown-warm);
+      background: transparent;
+    }
+
+    .btn-outline:hover {
+      background-color: var(--brown-warm);
+      color: var(--bg-cream);
+    }
+
+    /* Editable / Reserved Image Slots */
+    .image-slot {
+      position: relative;
+      background: linear-gradient(145deg, var(--bg-beige), #F7EFE6);
+      border: 1.5px dashed rgba(92, 64, 51, 0.32);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      overflow: hidden;
+      transition: var(--transition);
+      width: 100%;
+    }
+
+    .image-slot:hover {
+      border-color: var(--pink-deep);
+      background: linear-gradient(145deg, #F5E7E6, var(--bg-beige));
+    }
+
+    .image-slot .slot-tag {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--pink-deep);
+      background: rgba(255, 255, 255, 0.72);
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .image-slot .slot-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--brown-warm);
+      letter-spacing: 0.03em;
+      max-width: 260px;
+    }
+
+    .image-slot .slot-hint {
+      font-size: 0.74rem;
+      color: var(--brown-light);
+      margin-top: 6px;
+    }
+
+    .upload-trigger {
+      margin-top: 12px;
+      font-size: 0.75rem;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      background-color: rgba(255, 255, 255, 0.85);
+      color: var(--brown-warm);
+      border: 1px solid var(--border-subtle);
+      transition: var(--transition);
+    }
+
+    .upload-trigger:hover {
+      background-color: var(--brown-warm);
+      color: var(--bg-cream);
+    }
+
+    .image-slot.has-image {
+      border: none;
+      padding: 0;
+      background: var(--bg-beige);
+    }
+
+    .image-slot.has-image .slot-placeholder {
+      display: none;
+    }
+
+    .image-slot img.slot-preview {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .image-slot.has-image img.slot-preview {
+      display: block;
+    }
+
+    .replace-btn {
+      display: none;
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(250, 246, 241, 0.92);
+      color: var(--brown-warm);
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .image-slot.has-image:hover .replace-btn {
+      display: inline-block;
+      opacity: 1;
+    }
+
+    /* Logo specific slot */
+    .logo-slot {
+      min-width: 185px;
+      min-height: 62px;
+      padding: 10px 16px;
+      border-radius: 12px;
+    }
+
+    .logo-slot .slot-label {
+      font-size: 0.72rem;
+    }
+
+    .logo-slot .upload-trigger {
+      margin-top: 5px;
+      padding: 3px 10px;
+      font-size: 0.68rem;
+    }
+
+    .logo-slot.has-image {
+      background: transparent;
+      min-width: auto;
+      min-height: auto;
+    }
+
+    .logo-slot.has-image img.slot-preview {
+      max-height: 64px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(250, 246, 241, 0.94);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 86px;
+      gap: 20px;
+    }
+
+    nav.desktop-nav {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+    }
+
+    nav.desktop-nav a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--brown-warm);
+      position: relative;
+      padding: 4px 0;
+      transition: color 0.25s ease;
+    }
+
+    nav.desktop-nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 1.5px;
+      background-color: var(--pink-deep);
+      transition: width 0.3s ease;
+    }
+
+    nav.desktop-nav a:hover {
+      color: var(--pink-deep);
+    }
+
+    nav.desktop-nav a:hover::after {
+      width: 100%;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 38px;
+      height: 38px;
+      padding: 6px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .hamburger span {
+      display: block;
+      width: 100%;
+      height: 1.8px;
+      background-color: var(--brown-warm);
+      transition: var(--transition);
+    }
+
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      background-color: var(--bg-cream);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 20px 24px 28px;
+      gap: 16px;
+    }
+
+    .mobile-menu.open {
+      display: flex;
+    }
+
+    .mobile-menu a {
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(92, 64, 51, 0.08);
+    }
+
+    /* Section spacing */
+    section {
+      padding: 88px 0;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--pink-deep);
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .section-header {
+      max-width: 680px;
+      margin-bottom: 48px;
+    }
+
+    .section-header h2 {
+      font-size: clamp(2.1rem, 4vw, 3.1rem);
+      margin-bottom: 16px;
+    }
+
+    .section-header p {
+      color: var(--brown-light);
+      font-size: 1.04rem;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 64px 0 92px;
+      position: relative;
+      background: radial-gradient(circle at 85% 20%, rgba(243, 217, 220, 0.45), transparent 50%),
+                  radial-gradient(circle at 10% 80%, rgba(242, 233, 223, 0.8), transparent 55%);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      align-items: center;
+      gap: 52px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      border-radius: var(--radius-pill);
+      background-color: var(--pink-soft);
+      color: var(--brown-warm);
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 22px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 5.4vw, 4.4rem);
+      margin-bottom: 20px;
+      letter-spacing: -0.01em;
+    }
+
+    .hero p.subtitle {
+      font-size: 1.12rem;
+      color: var(--brown-light);
+      max-width: 520px;
+      margin-bottom: 34px;
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 34px;
+    }
+
+    .hero-essence {
+      display: inline-block;
+      padding-top: 18px;
+      border-top: 1px solid var(--border-subtle);
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.35rem;
+      color: var(--brown-warm);
+    }
+
+    .hero-visual-card {
+      background: #fff;
+      padding: 18px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(92, 64, 51, 0.08);
+    }
+
+    .hero-slot {
+      aspect-ratio: 4 / 4.4;
+    }
+
+    /* Nuestra Historia */
+    .story {
+      background-color: var(--bg-beige);
+    }
+
+    .story-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .story h2 {
+      font-size: clamp(2.1rem, 3.8vw, 3rem);
+      margin-bottom: 20px;
+    }
+
+    .story p {
+      font-size: 1.06rem;
+      color: var(--brown-light);
+      margin-bottom: 24px;
+    }
+
+    .story-quote {
+      background: var(--bg-cream);
+      border-left: 3px solid var(--pink-main);
+      padding: 28px 32px;
+      border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .story-quote blockquote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.75rem;
+      font-style: italic;
+      line-height: 1.35;
+      color: var(--brown-warm);
+      margin-bottom: 12px;
+    }
+
+    .story-quote span {
+      font-size: 0.82rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--pink-deep);
+      font-weight: 600;
+    }
+
+    /* La Experiencia Marea */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 26px;
+    }
+
+    .pillar-card {
+      background: #fff;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 36px 30px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pillar-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--pink-soft), var(--pink-main));
+    }
+
+    .pillar-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .pillar-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      font-style: italic;
+      color: var(--pink-deep);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .pillar-card h3 {
+      font-size: 1.65rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 12px;
+    }
+
+    .pillar-card p {
+      color: var(--brown-light);
+      font-size: 0.96rem;
+    }
+
+    /* Productos */
+    .products {
+      background-color: var(--bg-beige);
+    }
+
+    .category-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 36px;
+    }
+
+    .tab-btn {
+      padding: 9px 20px;
+      border-radius: var(--radius-pill);
+      font-size: 0.85rem;
+      font-weight: 500;
+      background: var(--bg-cream);
+      color: var(--brown-warm);
+      border: 1px solid var(--border-subtle);
+      transition: var(--transition);
+    }
+
+    .tab-btn.active,
+    .tab-btn:hover {
+      background: var(--brown-warm);
+      color: var(--bg-cream);
+      border-color: var(--brown-warm);
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .product-card {
+      background: var(--bg-cream);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      border: 1px solid rgba(92, 64, 51, 0.1);
+      display: flex;
+      flex-direction: column;
+      transition: var(--transition);
+    }
+
+    .product-card.hidden {
+      display: none;
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .product-slot {
+      aspect-ratio: 4 / 3.4;
+      margin-bottom: 18px;
+    }
+
+    .product-cat {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--pink-deep);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .product-card h3 {
+      font-size: 1.55rem;
+      margin-bottom: 8px;
+    }
+
+    .product-card p {
+      font-size: 0.92rem;
+      color: var(--brown-light);
+    }
+
+    .products-note {
+      margin-top: 44px;
+      padding: 24px 28px;
+      background: var(--pink-soft);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .products-note p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.45rem;
+      font-weight: 600;
+      color: var(--brown-warm);
+    }
+
+    /* Productos Destacados */
+    .featured-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    .featured-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .featured-slot {
+      aspect-ratio: 16 / 11;
+    }
+
+    .featured-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .featured-meta h3 {
+      font-size: 1.8rem;
+    }
+
+    .pill-tag {
+      background: var(--pink-soft);
+      color: var(--brown-warm);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: var(--radius-pill);
+    }
+
+    /* Pedidos */
+    .orders {
+      background: linear-gradient(180deg, var(--bg-beige), var(--bg-cream));
+    }
+
+    .orders-box {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      padding: 48px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .orders-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 26px 0 32px;
+    }
+
+    .orders-list li {
+      background: var(--bg-cream);
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-size: 0.92rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(92, 64, 51, 0.08);
+    }
+
+    .orders-list li::before {
+      content: '✦';
+      color: var(--pink-deep);
+      font-size: 0.85rem;
+    }
+
+    .orders-aside {
+      background: var(--bg-beige);
+      padding: 32px;
+      border-radius: var(--radius-lg);
+      text-align: center;
+    }
+
+    .orders-aside h3 {
+      font-size: 1.7rem;
+      margin-bottom: 10px;
+    }
+
+    .orders-aside p {
+      font-size: 0.92rem;
+      color: var(--brown-light);
+      margin-bottom: 22px;
+    }
+
+    /* Ferias y Eventos */
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .event-slot {
+      aspect-ratio: 4 / 3;
+    }
+
+    /* Instagram */
+    .instagram-banner {
+      background: var(--pink-soft);
+      border-radius: var(--radius-lg);
+      padding: 56px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .instagram-banner h2 {
+      font-size: clamp(2.1rem, 4vw, 3rem);
+      margin-bottom: 12px;
+    }
+
+    .instagram-banner p {
+      color: var(--brown-light);
+      max-width: 520px;
+      margin: 0 auto 20px;
+    }
+
+    .ig-handle {
+      display: inline-block;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--brown-warm);
+      margin-bottom: 24px;
+    }
+
+    /* Contacto */
+    .contact {
+      background-color: var(--bg-beige);
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .contact-info-card {
+      background: var(--bg-cream);
+      padding: 32px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      margin-top: 24px;
+    }
+
+    .contact-info-item {
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(92, 64, 51, 0.1);
+    }
+
+    .contact-info-item:last-child {
+      border-bottom: none;
+    }
+
+    .contact-info-item strong {
+      display: block;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--pink-deep);
+      margin-bottom: 4px;
+    }
+
+    .contact-form {
+      background: #fff;
+      padding: 36px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--brown-warm);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 12px;
+      border: 1px solid rgba(92, 64, 51, 0.22);
+      background-color: var(--bg-cream);
+      font-family: inherit;
+      font-size: 0.94rem;
+      color: var(--brown-warm);
+      transition: border-color 0.25s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--pink-deep);
+      background-color: #fff;
+    }
+
+    .form-feedback {
+      display: none;
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: var(--pink-soft);
+      color: var(--brown-warm);
+      font-size: 0.9rem;
+    }
+
+    /* Footer */
+    footer {
+      background-color: var(--bg-cream);
+      border-top: 1px solid var(--border-subtle);
+      padding: 64px 0 44px;
+      text-align: center;
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .footer-logo-wrap {
+      max-width: 240px;
+      margin-bottom: 6px;
+    }
+
+    .footer-phrase {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.65rem;
+      font-style: italic;
+    }
+
+    .footer-meta {
+      font-size: 0.9rem;
+      color: var(--brown-light);
+    }
+
+    .footer-tagline {
+      margin-top: 10px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border-subtle);
+      width: 100%;
+      max-width: 460px;
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      color: var(--brown-warm);
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .hero-grid,
+      .story-grid,
+      .orders-box,
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .products-grid,
+      .pillars-grid,
+      .events-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      nav.desktop-nav {
+        display: none;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+    }
+
+    @media (max-width: 640px) {
+      section {
+        padding: 64px 0;
+      }
+
+      .products-grid,
+      .pillars-grid,
+      .featured-grid,
+      .events-grid,
+      .orders-list {
+        grid-template-columns: 1fr;
+      }
+
+      .orders-box,
+      .contact-form,
+      .instagram-banner {
+        padding: 28px 20px;
+      }
+
+      .header-actions .btn {
+        padding: 10px 16px;
+        font-size: 0.82rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Input oculto global para cargar imágenes locales cuando desees previsualizarlas -->
+  <input type="file" id="global-image-uploader" accept="image/*" style="display:none" />
+
+  <!-- HEADER -->
+  <header>
+    <div class="container header-inner">
+      <!-- Espacio reservado para logo-marea -->
+      <div class="image-slot logo-slot" data-slot-key="logo-marea" id="header-logo-slot">
+        <img class="slot-preview" alt="Logo oficial de MAREA" />
+        <div class="slot-placeholder">
+          <div class="slot-label">[AQUÍ VA EL LOGO OFICIAL DE MAREA]</div>
+          <button type="button" class="upload-trigger" data-upload-for="logo-marea">Subir logo-marea</button>
+        </div>
+        <button type="button" class="replace-btn" data-upload-for="logo-marea">Cambiar logo</button>
+      </div>
+
+      <nav class="desktop-nav" aria-label="Navegación principal">
+        <a href="#inicio">Inicio</a>
+        <a href="#nuestra-historia">Nuestra historia</a>
+        <a href="#la-marea">La marea</a>
+        <a href="#productos">Productos</a>
+        <a href="#pedidos">Pedidos</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="#pedidos" class="btn btn-primary">Haz tu pedido</a>
+        <button type="button" class="hamburger" id="hamburger-btn" aria-label="Abrir menú" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+
+    <nav class="mobile-menu" id="mobile-menu" aria-label="Navegación móvil">
+      <a href="#inicio">Inicio</a>
+      <a href="#nuestra-historia">Nuestra historia</a>
+      <a href="#la-marea">La marea</a>
+      <a href="#productos">Productos</a>
+      <a href="#pedidos">Pedidos</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="inicio">
+    <div class="container hero-grid">
+      <div>
+        <span class="hero-badge">Anapoima, Cundinamarca · @by_marea26</span>
+        <h1>¿Qué te trae la marea?</h1>
+        <p class="subtitle">Postres, antojos y algo más, hechos artesanalmente para sorprenderte.</p>
+        <div class="hero-cta">
+          <a href="#productos" class="btn btn-primary">Descubrir la marea</a>
+          <a href="#pedidos" class="btn btn-secondary">Haz tu pedido</a>
+        </div>
+        <p class="hero-essence">“Creamos lo inesperado.”</p>
+      </div>
+
+      <div class="hero-visual-card">
+        <div class="image-slot hero-slot" data-slot-key="producto-destacado">
+          <img class="slot-preview" alt="Creación destacada de MAREA" />
+          <div class="slot-placeholder">
+            <span class="slot-tag">Archivo: producto-destacado</span>
+            <div class="slot-label">[FOTOGRAFÍA DEL PRODUCTO – AGREGAR POSTERIORMENTE]</div>
+            <p class="slot-hint">Espacio reservado para la fotografía principal de esta marea.</p>
+            <button type="button" class="upload-trigger" data-upload-for="producto-destacado">Subir imagen</button>
+          </div>
+          <button type="button" class="replace-btn" data-upload-for="producto-destacado">Cambiar foto</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NUESTRA HISTORIA -->
+  <section class="story" id="nuestra-historia">
+    <div class="container story-grid">
+      <div>
+        <span class="eyebrow">Nuestra historia</span>
+        <h2>Una marea que siempre trae algo nuevo.</h2>
+        <p>MAREA nació de una idea sencilla: crear algo diferente y disfrutar el proceso de descubrir nuevos sabores. Somos un emprendimiento artesanal de Anapoima que combina lo casero con la creatividad para crear postres, antojos y propuestas que cambian con cada nueva marea.</p>
+      </div>
+
+      <div class="story-quote">
+        <blockquote>“No siempre sabrás qué viene. Y justamente ahí está la magia.”</blockquote>
+        <span>Esencia MAREA</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- LA EXPERIENCIA MAREA -->
+  <section id="la-marea">
+    <div class="container">
+      <div class="section-header">
+        <span class="eyebrow">La experiencia MAREA</span>
+        <h2>¿Qué trae esta marea?</h2>
+        <p>Más que un menú fijo, cada entrega es una invitación a probar combinaciones distintas y creaciones de temporada.</p>
+      </div>
+
+      <div class="pillars-grid">
+        <article class="pillar-card">
+          <span class="pillar-num">01</span>
+          <h3>DESCUBRE</h3>
+          <p>“Sabores y productos que despiertan la curiosidad.”</p>
+        </article>
+
+        <article class="pillar-card">
+          <span class="pillar-num">02</span>
+          <h3>CREA</h3>
+          <p>“Experimentamos con ingredientes, tendencias y combinaciones.”</p>
+        </article>
+
+        <article class="pillar-card">
+          <span class="pillar-num">03</span>
+          <h3>SORPRÉNDETE</h3>
+          <p>“Porque probar algo nuevo también hace parte de la experiencia.”</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTOS -->
+  <section class="products" id="productos">
+    <div class="container">
+      <div class="section-header">
+        <span class="eyebrow">Productos</span>
+        <h2>Lo que puede traer la marea</h2>
+        <p>Nuestra propuesta evoluciona constantemente entre clásicos artesanales, ediciones limitadas y nuevas ideas.</p>
+      </div>
+
+      <div class="category-tabs" role="tablist" aria-label="Categorías de productos">
+        <button type="button" class="tab-btn active" data-filter="all">Todos</button>
+        <button type="button" class="tab-btn" data-filter="postres">Postres</button>
+        <button type="button" class="tab-btn" data-filter="antojos">Antojos</button>
+        <button type="button" class="tab-btn" data-filter="temporada">Temporada</button>
+        <button type="button" class="tab-btn" data-filter="algo-mas">Algo más</button>
+      </div>
+
+      <div class="products-grid">
+        <!-- Alfajores -->
+        <article class="product-card" data-category="postres">
+          <div class="image-slot product-slot" data-slot-key="alfajores">
+            <img class="slot-preview" alt="Alfajores artesanales MAREA" />
+            <div class="slot-placeholder">
+              <span class="slot-tag">Archivo: alfajores</span>
+              <div class="slot-label">[AQUÍ VA LA FOTO REAL DE LOS ALFAJORES]</div>
+              <button type="button" class="upload-trigger" data-upload-for="alfajores">Subir imagen</button>
+            </div>
+            <button type="button" class="replace-btn" data-upload-for="alfajores">Cambiar foto</button>
+          </div>
+          <span class="product-cat">Postres</span>
+          <h3>Alfajores artesanales</h3>
+          <p>Preparados artesanalmente en lotes pequeños con dedicación y textura delicada.</p>
+        </article>
+
+        <!-- Rollitos de canela -->
+        <article class="product-card" data-category="postres">
+          <div class="image-slot product-slot" data-slot-key="rollitos-canela">
+            <img class="slot-preview" alt="Rollitos de canela MAREA" />
+            <div class="slot-placeholder">
+              <span class="slot-tag">Archivo: rollitos-canela</span>
+              <div class="slot-label">[AQUÍ VA LA FOTO REAL DE LOS ROLLITOS DE CANELA]</div>
+              <button type="button" class="upload-trigger" data-upload-for="rollitos-canela">Subir imagen</button>
+            </div>
+            <button type="button" class="replace-btn" data-upload-for="rollitos-canela">Cambiar foto</button>
+          </div>
+          <span class="product-cat">Postres</span>
+          <h3>Rollitos de canela</h3>
+          <p>Esponjosos, aromáticos y recién horneados para acompañar cualquier antojo.</p>
+        </article>
+
+        <!-- Tartas, mousses y dulces -->
+        <article class="product-card" data-category="postres">
+          <div class="image-slot product-slot" data-slot-key="postres-otros">
+            <img class="slot-preview" alt="Tartas y mousses MAREA" />
+            <div class="slot-placeholder">
+              <span class="slot-tag">Categoría: Postres</span>
+              <div class="slot-label">[FOTOGRAFÍA DEL PRODUCTO – AGREGAR POSTERIORMENTE]</div>
+              <button type="button" class="upload-trigger" data-upload-for="postres-otros">Subir imagen</button>
+            </div>
+            <button type="button" class="replace-btn" data-upload-for="postres-otros">Cambiar foto</button>
+          </div>
+          <span class="product-cat">Postres</span>
+          <h3>Tartas, mousses y otros dulces</h3>
+          <p>Creaciones artesanales dulces que van rotando según cada nueva marea.</p>
+        </article>
+
+        <!-- Antojos -->
+        <article class="product-card" data-category="antojos">
+          <div class="image-slot product-slot" data-slot-key="antojos">
+            <img class="slot-preview" alt="Antojos MAREA" />
+            <div class="slot-placeholder">
+              <span class="slot-tag">Categoría: Antojos</span>
+              <div class="slot-label">[FOTOGRAFÍA DEL PRODUCTO – AGREGAR POSTERIORMENTE]</div>
+              <button type="button" class="upload-trigger" data-upload-for="antojos">Subir imagen</button>
+            </div>
+            <button type="button" class="replace-btn" data-upload-for="antojos">Cambiar foto</button>
+          </div>
+          <span class="product-cat">Antojos</span>
+          <h3>Antojos</h3>
+          <p>Preparaciones saladas y propuestas diferentes para salir de la rutina.</p>
+        </article>
+
+        <!-- Temporada -->
+        <article class="product-card" data-category="temporada">
+          <div class="image-slot product-slot" data-slot-key="temporada">
+            <img class="slot-preview" alt="Productos de temporada MAREA" />
+            <div class="slot-placeholder">
+              <span class="slot-tag">Categoría: Temporada</span>
+              <div class="slot-label">[FOTOGRAFÍA DEL PRODUCTO – AGREGAR POSTERIORMENTE]</div>
+              <button type="button" class="upload-trigger" data-upload-for="temporada">Subir imagen</button>
+            </div>
+            <button type="button" class="replace-btn" data-upload-for="temporada">Cambiar foto</button>
+          </div>
+          <span class="product-cat">Temporada</span>
+          <h3>Ediciones de temporada</h3>
+          <p>Productos especiales que aparecen por tiempo limitado.</p>
+        </article>
+
+        <!-- Algo más -->
+        <article class="product-card" data-category="algo-mas">
+          <div class="image-slot product-slot" data-slot-key="algo-mas">
+            <img class="slot-preview" alt="Algo más MAREA" />
+            <div class="slot-placeholder">
+              <span class="slot-tag">Categoría: Algo más</span>
+              <div class="slot-label">[FOTOGRAFÍA DEL PRODUCTO – AGREGAR POSTERIORMENTE]</div>
+              <button type="button" class="upload-trigger" data-upload-for="algo-mas">Subir imagen</button>
+            </div>
+            <button type="button" class="replace-btn" data-upload-for="algo-mas">Cambiar foto</button>
+          </div>
+          <span class="product-cat">Algo más</span>
+          <h3>Algo más</h3>
+          <p>Mermeladas artesanales, productos experimentales y nuevas ideas.</p>
+        </article>
+      </div>
+
+      <div class="products-note">
+        <p>“Esta marea cambia constantemente. Síguenos en Instagram para descubrir las novedades.”</p>
+        <a href="https://instagram.com/by_marea26" target="_blank" rel="noopener noreferrer" class="btn btn-outline">@by_marea26</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTOS DESTACADOS -->
+  <section id="destacados">
+    <div class="container">
+      <div class="section-header">
+        <span class="eyebrow">Selección actual</span>
+        <h2>De esta marea…</h2>
+        <p>Un espacio pensado para destacar los protagonistas de cada semana o edición especial.</p>
+      </div>
+
+      <div class="featured-grid">
+        <article class="featured-card">
+          <div class="image-slot featured-slot" data-slot-key="alfajores">
+            <img class="slot-preview" alt="Alfajores artesanales destacados" />
+            <div class="slot-placeholder">
+              <span class="slot-tag">Archivo: alfajores</span>
+              <div class="slot-label">[AQUÍ VA LA FOTO REAL DE LOS ALFAJORES]</div>
+              <button type="button" class="upload-trigger" data-upload-for="alfajores">Subir imagen</button>
+            </div>
+            <button type="button" class="replace-btn" data-upload-for="alfajores">Cambiar foto</button>
+          </div>
+          <div class="featured-meta">
+            <h3>Alfajores artesanales</h3>
+            <span class="pill-tag">De esta marea</span>
+          </div>
+          <p>Uno de nuestros favoritos artesanales, ideal para disfrutar o regalar.</p>
+        </article>
+
+        <article class="featured-card">
+          <div class="image-slot featured-slot" data-slot-key="producto-destacado-2">
+            <img class="slot-preview" alt="Próximo producto destacado MAREA" />
+            <div class="slot-placeholder">
+              <span class="slot-tag">Archivo: producto-destacado</span>
+              <div class="slot-label">[FOTOGRAFÍA DEL PRODUCTO – AGREGAR POSTERIORMENTE]</div>
+              <p class="slot-hint">Espacio reservado para destacar otra creación de MAREA.</p>
+              <button type="button" class="upload-trigger" data-upload-for="producto-destacado-2">Subir imagen</button>
+            </div>
+            <button type="button" class="replace-btn" data-upload-for="producto-destacado-2">Cambiar foto</button>
+          </div>
+          <div class="featured-meta">
+            <h3>Próxima novedad</h3>
+            <span class="pill-tag">Espacio editable</span>
+          </div>
+          <p>Espacio preparado para actualizar fácilmente con el próximo lanzamiento.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- PEDIDOS -->
+  <section class="orders" id="pedidos">
+    <div class="container">
+      <div class="orders-box">
+        <div>
+          <span class="eyebrow">Pedidos</span>
+          <h2>¿Quieres que la marea llegue a ti?</h2>
+          <p>Realizamos pedidos para Anapoima, alrededores y ocasiones especiales.</p>
+
+          <ul class="orders-list">
+            <li>Pedidos individuales</li>
+            <li>Detalles y regalos</li>
+            <li>Eventos</li>
+            <li>Pedidos especiales</li>
+            <li>Productos para alianzas</li>
+          </ul>
+
+          <a href="#contacto" class="btn btn-primary">Solicitar pedido</a>
+        </div>
+
+        <div class="orders-aside">
+          <h3>Cobertura</h3>
+          <p>Anapoima, Cundinamarca, alrededores y pedidos especiales bajo solicitud.</p>
+          <a href="https://instagram.com/by_marea26" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Consultar por @by_marea26</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FERIAS Y EVENTOS -->
+  <section id="ferias">
+    <div class="container">
+      <div class="section-header">
+        <span class="eyebrow">Encuentros</span>
+        <h2>También nos encuentras por ahí…</h2>
+        <p>MAREA también sale de la cocina para encontrarse contigo en ferias, eventos y experiencias gastronómicas.</p>
+      </div>
+
+      <div class="events-grid">
+        <div class="image-slot event-slot" data-slot-key="ferias-eventos-1">
+          <img class="slot-preview" alt="Feria o evento MAREA 1" />
+          <div class="slot-placeholder">
+            <span class="slot-tag">Archivo: ferias-eventos</span>
+            <div class="slot-label">[FOTOGRAFÍA DEL PRODUCTO – AGREGAR POSTERIORMENTE]</div>
+            <p class="slot-hint">Espacio reservado para fotografía real de feria o evento.</p>
+            <button type="button" class="upload-trigger" data-upload-for="ferias-eventos-1">Subir imagen</button>
+          </div>
+          <button type="button" class="replace-btn" data-upload-for="ferias-eventos-1">Cambiar foto</button>
+        </div>
+
+        <div class="image-slot event-slot" data-slot-key="ferias-eventos-2">
+          <img class="slot-preview" alt="Feria o evento MAREA 2" />
+          <div class="slot-placeholder">
+            <span class="slot-tag">Archivo: ferias-eventos</span>
+            <div class="slot-label">[FOTOGRAFÍA DEL PRODUCTO – AGREGAR POSTERIORMENTE]</div>
+            <p class="slot-hint">Espacio reservado para fotografía real de feria o evento.</p>
+            <button type="button" class="upload-trigger" data-upload-for="ferias-eventos-2">Subir imagen</button>
+          </div>
+          <button type="button" class="replace-btn" data-upload-for="ferias-eventos-2">Cambiar foto</button>
+        </div>
+
+        <div class="image-slot event-slot" data-slot-key="ferias-eventos-3">
+          <img class="slot-preview" alt="Feria o evento MAREA 3" />
+          <div class="slot-placeholder">
+            <span class="slot-tag">Archivo: ferias-eventos</span>
+            <div class="slot-label">[FOTOGRAFÍA DEL PRODUCTO – AGREGAR POSTERIORMENTE]</div>
+            <p class="slot-hint">Espacio reservado para fotografía real de feria o evento.</p>
+            <button type="button" class="upload-trigger" data-upload-for="ferias-eventos-3">Subir imagen</button>
+          </div>
+          <button type="button" class="replace-btn" data-upload-for="ferias-eventos-3">Cambiar foto</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTAGRAM -->
+  <section id="instagram">
+    <div class="container">
+      <div class="instagram-banner">
+        <span class="eyebrow">Comunidad</span>
+        <h2>Síguenos la marea</h2>
+        <p>Descubre nuevos productos, sabores, ferias y lanzamientos.</p>
+        <div class="ig-handle">@by_marea26</div>
+        <br />
+        <a href="https://instagram.com/by_marea26" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Ver Instagram</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section class="contact" id="contacto">
+    <div class="container contact-grid">
+      <div>
+        <span class="eyebrow">Contacto</span>
+        <h2>¿Qué quieres que te traiga la próxima marea?</h2>
+        <p>Cuéntanos qué tienes en mente, si buscas un detalle especial o si quieres conocer lo que estamos preparando.</p>
+
+        <div class="contact-info-card">
+          <div class="contact-info-item">
+            <strong>Ubicación</strong>
+            <span>Anapoima, Cundinamarca, Colombia</span>
+          </div>
+          <div class="contact-info-item">
+            <strong>Canal directo</strong>
+            <span>Pedidos y consultas por Instagram (@by_marea26)</span>
+          </div>
+        </div>
+      </div>
+
+      <form class="contact-form" id="contact-form">
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre" />
+        </div>
+
+        <div class="form-group">
+          <label for="telefono">Teléfono</label>
+          <input type="tel" id="telefono" name="telefono" required placeholder="Tu número de contacto" />
+        </div>
+
+        <div class="form-group">
+          <label for="buscando">¿Qué estás buscando?</label>
+          <select id="buscando" name="buscando" required>
+            <option value="">Selecciona una opción</option>
+            <option value="Pedidos individuales">Pedidos individuales</option>
+            <option value="Detalles y regalos">Detalles y regalos</option>
+            <option value="Eventos">Eventos</option>
+            <option value="Pedidos especiales">Pedidos especiales</option>
+            <option value="Productos para alianzas">Productos para alianzas</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="mensaje">Mensaje</label>
+          <textarea id="mensaje" name="mensaje" rows="4" required placeholder="Cuéntanos sobre tu pedido o idea..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Enviar solicitud</button>
+        <div class="form-feedback" id="form-feedback"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-logo-wrap">
+        <div class="image-slot logo-slot" data-slot-key="logo-marea">
+          <img class="slot-preview" alt="Logo oficial de MAREA" />
+          <div class="slot-placeholder">
+            <div class="slot-label">[AQUÍ VA EL LOGO OFICIAL DE MAREA]</div>
+            <button type="button" class="upload-trigger" data-upload-for="logo-marea">Subir logo-marea</button>
+          </div>
+          <button type="button" class="replace-btn" data-upload-for="logo-marea">Cambiar logo</button>
+        </div>
+      </div>
+
+      <p class="footer-phrase">“¿Qué te trae la marea?”</p>
+      <p class="footer-meta">@by_marea26 · Anapoima, Cundinamarca, Colombia</p>
+      <p class="footer-tagline">Hecho artesanalmente. Creado para sorprender.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Menú hamburguesa móvil
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    hamburgerBtn.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.toggle('open');
+      hamburgerBtn.setAttribute('aria-expanded', isOpen);
+    });
+
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        hamburgerBtn.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // Filtro por categorías de productos
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const productCards = document.querySelectorAll('.product-card');
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+
+        productCards.forEach(card => {
+          if (filter === 'all' || card.dataset.category === filter) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+    });
+
+    // Sistema de carga editable en vivo para reemplazar espacios reservados por archivos reales
+    const uploader = document.getElementById('global-image-uploader');
+    let activeSlotKey = null;
+
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-upload-for]');
+      if (!btn) return;
+      activeSlotKey = btn.dataset.uploadFor;
+      uploader.value = '';
+      uploader.click();
+    });
+
+    uploader.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file || !activeSlotKey) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const dataUrl = event.target.result;
+        document.querySelectorAll(`.image-slot[data-slot-key="${activeSlotKey}"]`).forEach(slot => {
+          const img = slot.querySelector('img.slot-preview');
+          img.src = dataUrl;
+          slot.classList.add('has-image');
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Manejo del formulario de contacto (sin inventar teléfono ni correo)
+    const contactForm = document.getElementById('contact-form');
+    const formFeedback = document.getElementById('form-feedback');
+
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nombre = document.getElementById('nombre').value.trim();
+      const buscando = document.getElementById('buscando').value;
+
+      formFeedback.style.display = 'block';
+      formFeedback.textContent = `¡Gracias, ${nombre}! Tu solicitud sobre "${buscando}" quedó lista. También puedes escribirnos directamente a @by_marea26 en Instagram.`;
+      contactForm.reset();
+    });
+  </script>
+</body>
+</html>
